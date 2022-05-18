@@ -1,0 +1,183 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Text.RegularExpressions;
+
+namespace Project_Charlie1
+{
+    public partial class VisitorRegistration : Form
+
+    {       
+        public static VisitorRegistration Self;
+
+        public VisitorRegistration()
+        {
+            InitializeComponent();
+            Self = this;      
+        }
+
+        private void Button_MeetingAim_Click(object sender, EventArgs e)
+        {
+            //open up the second form upon clicking the Meeting Aim button
+            MeetingAim aim = new MeetingAim();
+            aim.Show();             
+        }
+
+        private void CB_MeetingWith_SelectedIndexChanged(object sender, EventArgs e)
+        {
+ 
+        }
+
+        private void ValidateEmail()
+        {
+            Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+            Match match = regex.Match(TB_Email.Text);
+            if (match.Success)
+            {
+                LB_Visitors_onSite.Items.Add("Email: " + TB_Email.Text);
+            }
+            else
+            {
+                TB_Email.Focus();
+                MessageBox.Show(TB_Email.Text + " is invalid email address. \nPlease enter again.");
+            }
+        }
+
+        private void Button_SignIn_Click(object sender, EventArgs e)
+        {
+            if (TB_Name.Text == "")
+            {
+                TB_Name.Focus(); //focus the cursor to the mentioned textbox
+                MessageBox.Show("Full name is mandatory.");
+            }
+            else if (TB_Surname.Text == "")
+            {
+                TB_Surname.Focus();
+                MessageBox.Show("Full name is mandatory.");
+            }
+            else
+            {
+                LB_Visitors_onSite.Items.Add("=====Visitor Details=====");
+                LB_Visitors_onSite.Items.Add($"Name : {TB_Name.Text} {TB_Surname.Text}"); //putting inputted data to listbox
+            }
+
+            if (TB_Mobile.Text == "")
+            {
+                TB_Mobile.Focus();
+                MessageBox.Show("Mobile number is mandatory.");
+            }
+            else
+            {
+                int mobile;
+                bool success = int.TryParse(TB_Mobile.Text, out mobile); //convert string rep of the number to its integer equivalent
+                if (success)
+                {
+                    LB_Visitors_onSite.Items.Add("Mobile: " + TB_Mobile.Text);
+                }
+                else
+                {
+                    TB_Mobile.Focus();
+                    MessageBox.Show(TB_Mobile.Text + " contains non-numerical characters.\nPlease enter again.");
+                }
+
+            }
+
+            if (TB_Email.Text == "")
+            {
+                TB_Email.Focus();
+                MessageBox.Show("Email is mandatory.");
+            }
+            else
+            {
+                ValidateEmail();
+            }
+
+            string theDate = dTP_MeetingDate.Value.ToShortDateString();     //to show only date format
+            if (dTP_MeetingDate.Value.Date.CompareTo(DateTime.Now.Date) >= 0)     //prevent past date validation
+            {
+                if (dUD_Hour.SelectedIndex == -1 && dUD_Minute.SelectedIndex == -1)
+                {
+                    dUD_Hour.Focus();
+                    MessageBox.Show("Meeting time is mandatory.");
+                }
+                else
+                {
+                    LB_Visitors_onSite.Items.Add("-----------------------------");
+                    LB_Visitors_onSite.Items.Add($"Meeting on {theDate} at {dUD_Hour.SelectedItem}:{dUD_Minute.SelectedItem}");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("The date you've entered has passed.\nPlease enter the correct date.");
+            }
+
+
+            if (CB_MeetingWith.SelectedIndex == -1) //index -1 means nothing is selected
+            {
+                CB_MeetingWith.Focus();
+                MessageBox.Show("Please select who you're going to meet with.");
+            }
+            else
+            {
+                LB_Visitors_onSite.Items.Add($"A meeting with {CB_MeetingWith.SelectedItem.ToString()}");
+            }
+
+            if (Button_MeetingAim.Text == "Meeting Aim")
+            {
+                Button_MeetingAim.Focus();
+                MessageBox.Show("Meeting aim is mandatory.");
+            }
+            else
+            {
+                LB_Visitors_onSite.Items.Add("Category: " + Button_MeetingAim.Text);
+            }
+
+            CheckFields();
+
+        }
+
+        public void CheckFields() //ListBox will be filled AFTER every field is filled
+        {
+            if (TB_Name.Text != "" && TB_Surname.Text != "" && TB_Mobile.Text != "" && TB_Email.Text != ""
+                && dTP_MeetingDate.Value.Date.CompareTo(DateTime.Now.Date) >= 0 && CB_MeetingWith.SelectedIndex != -1
+                && dUD_Hour.SelectedIndex != -1 && dUD_Minute.SelectedIndex != -1 && Button_MeetingAim.Text != "Meeting Aim")
+            {
+                ClearForm(); //fields will be emptied after the information is stored in ListBox
+            }
+            else
+            {
+                LB_Visitors_onSite.Items.Clear();
+            }
+        }
+
+        
+
+        public void ClearForm()
+        {
+            TB_Name.Clear();
+            TB_Surname.Clear();
+            TB_Mobile.Clear();
+            TB_Email.Clear();
+            dTP_MeetingDate.Value = DateTime.Today;
+            dUD_Hour.Text = "hour";
+            dUD_Minute.Text = "minutes";
+            CB_MeetingWith.SelectedIndex = -1;
+            Button_MeetingAim.Text = "Meeting Aim";
+
+        }
+
+
+        private void Button_Delete_Click(object sender, EventArgs e)
+        {
+            LB_Visitors_onSite.Items.Clear();
+        }
+
+    }
+}
