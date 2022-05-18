@@ -1,0 +1,56 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Project_Charlie1
+{
+    public partial class MeetingAim : Form
+    {        
+        public MeetingAim()
+        {
+            InitializeComponent();
+        }
+
+        private void Button_OK_Click(object sender, EventArgs e)
+        {
+ 
+            if (RB_Meeting.Checked)
+            {
+                VisitorRegistration.Self.Button_MeetingAim.Text = RB_Meeting.Text;
+                /*
+                MainFormName.MainForm'sPublicStaticClass.ButtoninMainForm.Button'sText = CheckedRadioButton'sText
+                */
+            }
+            else if (RB_SalesAppointment.Checked)
+            {
+                VisitorRegistration.Self.Button_MeetingAim.Text = RB_SalesAppointment.Text;                
+            }
+            else if (RB_SiteVisit.Checked)
+            {
+                VisitorRegistration.Self.Button_MeetingAim.Text = RB_SiteVisit.Text;               
+            }
+            else
+            {
+                VisitorRegistration.Self.Button_MeetingAim.Text = RB_StudentInterview.Text;                
+            }
+         
+            this.Close(); //close the window after clicking
+        }
+
+        private void Button_Cancel_Click(object sender, EventArgs e)
+        {
+            //SR08 Could : no option will be selected on the main form upon clicking Cancel
+            //a bit redundant I think but eh ¯\_(ツ)_/¯
+            
+            VisitorRegistration.Self.Button_MeetingAim.Text = "Meeting Aim";
+            this.Close();
+                
+        }
+    }
+}
